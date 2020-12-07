@@ -18,11 +18,11 @@ FORMULA_DICT = {
 
 
 def calculate_expense(formula, spectra_list, error_line):
-    arr = sorted([(formula(*spectra), i + 1) for i, spectra in enumerate(spectra_list)])
+    arr = sorted([(formula(*spectra), i + 1 == error_line) for i, spectra in enumerate(spectra_list)], reverse=True)
 
     rank = None
     for i in range(len(arr)):
-        if arr[i][1] == error_line:
+        if arr[i][1]:
             rank = i + 1
 
     expense = rank / len(arr)
