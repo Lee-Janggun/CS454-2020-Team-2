@@ -1,6 +1,7 @@
 import os
 import csv
 from formulas import jaccard, ochiai, tarantula, ample, wong1, wong2, wong3, op1, op2
+from pandas import Series
 
 
 TEST_DIR = 'dataset/test'
@@ -18,13 +19,8 @@ FORMULA_DICT = {
 
 
 def calculate_expense(formula, spectra_list, error_line):
-    arr = sorted([(formula(*spectra), i + 1 == error_line) for i, spectra in enumerate(spectra_list)], reverse=True)
-
-    rank = None
-    for i in range(len(arr)):
-        if arr[i][1]:
-            rank = i + 1
-
+    arr = Series([formula(*spectra) for spectra in spectra_list]).rank(method='max', ascending=False)
+    rank = arr[error_line - 1]
     expense = rank / len(arr)
     return expense
 
