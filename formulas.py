@@ -1,24 +1,24 @@
 import math
 
 
+def div(x, y):
+    return 1 if y == 0 else x / y
+
+
 def jaccard(ep, ef, np, nf):
-    return ef / (ef + nf + ep)
+    return div(ef, ef + nf + ep)
 
 
 def ochiai(ep, ef, np, nf):
-    if ef == 0:  # considering zero division error
-        return 0
-    return ef / math.sqrt((ef + nf) * (ef + ep))
+    return div(ef, math.sqrt((ef + nf) * (ef + ep)))
 
 
 def tarantula(ep, ef, np, nf):
-    if ef == 0:  # considering zero division error
-        return 0
-    return (ef / (ef + nf)) / (ep / (ep + np) + ef / (ef + nf))
+    return div(div(ef, ef + nf), div(ep, ep + np) + div(ef, ef + nf))
 
 
 def ample(ep, ef, np, nf):
-    return abs(ef / (ef + nf) - ep / (ep + np))
+    return abs(div(ef, ef + nf) - div(ep, ep + np))
 
 
 def wong1(ep, ef, np, nf):
@@ -46,4 +46,4 @@ def op1(ep, ef, np, nf):
 
 
 def op2(ep, ef, np, nf):
-    return ef - ep / (ep + np + 1)
+    return ef - div(ep, ep + np + 1)
