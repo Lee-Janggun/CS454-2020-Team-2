@@ -1,10 +1,5 @@
 import math
 
-
-def div(x, y):
-    return 1 if y == 0 else x / y
-
-
 def jaccard(ep, ef, np, nf):
     return div(ef, ef + nf + ep)
 
