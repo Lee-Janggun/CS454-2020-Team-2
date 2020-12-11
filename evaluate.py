@@ -27,20 +27,26 @@ def calculate_fitness(formula, arg_list):
     fitness = 0
     for arg in arg_list:
         fitness += calculate_expense(formula, **arg)
-    return fitness
+    return fitness,
+
+
 
 #dataset: list of filepaths for dataset
-def evaluate(formula, data_path_list):
+def spectra_list(file_path_list):
     arg_list = []
-    for filepath in data_path_list:
+    for filepath in file_path_list:
         with open(filepath, 'r') as fin:
             lst = fin.readlines()
 
         error_line = int(lst[0].strip())
         spectra_list = [tuple([int(x.strip()) for x in sp.split(',')]) for sp in lst[1:]]  # list of (e_p, e_f, n_p, n_f)
         arg_list.append({'spectra_list': spectra_list, 'error_line': error_line})
+    return arg_list    
 
+def evaluate(formula, data_path_list):
+    arg_list = spectra_list(data_path_list)
     return calculate_fitness(formula, arg_list)
+
 
 
 if __name__ == '__main__':
