@@ -31,10 +31,9 @@ def calculate_fitness(formula, arg_list):
     return fitness
 
 
-def evaluate():
-    _, test_dataset = get_dataset()
+def evaluate(name, formula, dataset):
     path_list = []
-    for k, v in test_dataset.items():
+    for k, v in dataset.items():
         path_list.extend(v)
 
     arg_list = []
@@ -49,10 +48,11 @@ def evaluate():
     with open('results.csv', 'w', newline='') as fout:
         writer = csv.writer(fout)
         writer.writerow(['formula', 'fitness'])
-        for name, formula in FORMULA_DICT.items():
-            fitness = calculate_fitness(formula, arg_list)
-            writer.writerow([name, fitness])
+        fitness = calculate_fitness(formula, arg_list)
+        writer.writerow([name, fitness])
 
 
 if __name__ == '__main__':
-    evaluate()
+    _, test_dataset = get_dataset()
+    for name, formula in FORMULA_DICT.items():
+        evaluate(name, formula, test_dataset)
