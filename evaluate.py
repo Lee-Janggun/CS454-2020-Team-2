@@ -30,29 +30,28 @@ def calculate_fitness(formula, arg_list):
         fitness += calculate_expense(formula, **arg)
     return fitness
 
-
-def evaluate(formula, dataset):
-    path_list = []
-    for k, v in dataset.items():
-        path_list.extend(v)
-
+#dataset: list of filepaths for dataset
+def evaluate(formula, data_path_list):
     arg_list = []
-    for filepath in path_list:
+    for filepath in data_path_list:
         with open(filepath, 'r') as fin:
             lst = fin.readlines()
 
         error_line = int(lst[0].strip())
         spectra_list = [tuple([int(x.strip()) for x in sp.split(',')]) for sp in lst[1:]]  # list of (e_p, e_f, n_p, n_f)
         arg_list.append({'spectra_list': spectra_list, 'error_line': error_line})
-        
-        return calculate_fitness(formula, arg_list)
+
+    return calculate_fitness(formula, arg_list)
 
 
 if __name__ == '__main__':
     _, test_dataset = get_dataset()
+    path_list = []
+    for _, v in test_dataset.items():
+        path_list.extend(v)
     for name, formula in FORMULA_DICT.items():
         with open('results.csv', 'w', newline='') as fout:
             writer = csv.writer(fout)
             writer.writerow(['formula', 'fitness'])
-            fitness = evaluate(formula, test_dataset)
+            fitness = evaluate(formula, path_list)
             writer.writerow([name, fitness])
