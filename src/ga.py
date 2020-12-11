@@ -1,6 +1,6 @@
 from deap import base, gp, creator, tools, algorithms
 from pandas import Series
-import operator, numpy, csv
+import operator, csv, multiprocessing
 import operators, dataset, evaluate
 
 #Generate trees
@@ -8,10 +8,10 @@ def evalFormula(individual, data_set, pset):
     formula = gp.compile(individual, pset)
     return evaluate.calculate_fitness(formula, data_set)
 
-def saveFormula(formula_name, formula, fitness):
+def saveFormula(formula_name, formula, test_fitness, train_fitness):
     with open('results.csv', 'a', newline='') as fout:
             writer = csv.writer(fout)
-            writer.writerow([formula_name, fitness])
+            writer.writerow([formula_name, test_fitness, train_fitness])
 
 def main():
     print("Make primitive set")
@@ -53,6 +53,9 @@ def main():
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
     toolbox.register("mutate", gp.mutUniform, expr = toolbox.expr_mut, pset = pset)
 
+    pool = multiprocessing.Pool()
+    toolbox.register("map", pool.map)
+
     toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
     toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
 
@@ -64,6 +67,7 @@ def main():
     LOGS = True
 
     for i in range(1,NUM_OF_FORMULAS + 1):
+        
         print(f"Begin GA for if. Formula {i}")
         pop = toolbox.population(n=POPULATION)
         hof = tools.HallOfFame(1)
