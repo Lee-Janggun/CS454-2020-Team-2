@@ -1,3 +1,5 @@
+import random
+import os
 
 """
 IF
@@ -60,92 +62,104 @@ Class Field
 
 """
 
-def get_dataset():
-    dic = {
-        'if': [
-            'gzip_v1_vector_FAULTY_F_KL_2.txt',
-            'gzip_v1_vector_FAULTY_F_KP_1.txt',
-            'gzip_v1_vector_FAULTY_F_KP_9.txt',
-            'gzip_v2_vector_FAULTY_F_KL_1.txt',
-            'gzip_v4_vector_FAULTY_F_KL_1.txt',
-            'gzip_v4_vector_FAULTY_F_KP_3.txt',
-            'grep_v1_vector_FAULTY_F_KP_2.txt',
-            'grep_v4_vector_FAULTY_F_KP_8.txt',
-            'sed_v2_vector_FAULTY_F_AG_2.txt',
-            'sed_v3_vector_FAULTY_F_AG_6.txt',
-            'sed_v3_vector_FAULTY_F_AG_11.txt',
-            'sed_v5_vector_FAULTY_F_KRM_1.txt',
-            'flex_v1_vector_F_AA_3.txt',
-            'flex_v1_vector_F_AA_6.txt',
-            'flex_v1_vector_F_JR_3.txt',
-            'flex_v1_vector_F_AA_1.txt',
-            'flex_v2_vector_F_AA_3.txt',
-            'flex_v2_vector_F_JR_1.txt',
-            'flex_v3_vector_F_AA_3.txt',
-            'flex_v4_vector_F_JR_1.txt',
-            'flex_v4_vector_F_JR_3.txt',
-            'flex_v4_vector_F_AA_3.txt',
-            'flex_v5_vector_F_JR_2.txt'
-        ],
-        'method_call':[
-            'gzip_v1_vector_FAULTY_F_KP_10.txt',
-            'gzip_v5_vector_FAULTY_F_TW_1.txt',
-            'grep_v2_vector_FAULTY_F_DG_1.txt',
-            'grep_v3_vector_FAULTY_F_DG_3.txt',
-            'grep_v3_vector_FAULTY_F_KP_7.txt',
-            'grep_v4_vector_FAULTY_F_DG_3.txt',
-            'grep_v4_vector_FAULTY_F_KP_6.txt',
-            'sed_v2_vector_FAULTY_F_AG_20.txt',
-            'sed_v3_vector_FAULTY_F_AG_15.txt',
-            'sed_v4_vector_FAULTY_F_KRM_2.txt',
-            'flex_v1_vector_F_JR_6.txt',
-            'flex_v1_vector_F_JR_5.txt',
-            'flex_v1_vector_F_JR_4.txt',
-            'flex_v1_vector_F_JR_2.txt',
-            'flex_v2_vector_F_JR_2.txt',
-            'flex_v2_vector_F_JR_3.txt',
-            'flex_v2_vector_F_HD_8.txt',
-            'flex_v2_vector_F_HD_4.txt',
-            'flex_v3_vector_F_HD_6.txt',
-            'flex_v3_vector_F_JR_5.txt',
-            'flex_v3_vector_F_JR_3.txt',
-            'flex_v3_vector_F_JR_2.txt',
-            'flex_v4_vector_F_AA_2.txt',
-            'flex_v4_vector_F_JR_4.txt'
-        ],
-        'sequence':[
-            'gzip_v1_vector_FAULTY_F_TW_3.txt',
-            'sed_v2_vector_FAULTY_F_AG_12.txt',
-            'sed_v2_vector_FAULTY_F_AG_17.txt',
-            'sed_v2_vector_FAULTY_F_AG_19.txt',
-            'sed_v3_vector_FAULTY_F_AG_17.txt',
-            'flex_v2_vector_F_AA_2.txt',
-            'flex_v2_vector_F_HD_6.txt',
-            'flex_v2_vector_F_HD_7.txt',
-            'flex_v2_vector_F_JR_5.txt',
-            'flex_v3_vector_F_AA_5.txt',
-            'flex_v4_vector_F_JR_2.txt',
-            'flex_v4_vector_F_HD_5.txt',
-            'flex_v4_vector_F_AA_7.txt'
-        ],
-        'assignment':[
-            'gzip_v1_vector_FAULTY_F_KL_6.txt',
-            'gzip_v2_vector_FAULTY_F_KL_3.txt',
-            'gzip_v2_vector_FAULTY_F_KL_8.txt',
-            'gzip_v5_vector_FAULTY_F_KL_2.txt',
-            'gzip_v5_vector_FAULTY_F_KL_4.txt',
-            'grep_v3_vector_FAULTY_F_DG_2.txt',
-            'grep_v3_vector_FAULTY_F_DG_8.txt',
-            'sed_v3_vector_FAULTY_F_AG_5.txt',
-            'sed_v3_vector_FAULTY_F_AG_18.txt',
-            'sed_v5_vector_FAULTY_F_KRM_2.txt',
-            'sed_v5_vector_FAULTY_F_KRM_8.txt',
-            'sed_v5_vector_FAULTY_F_KRM_10.txt',
-            'flex_v1_vector_F_AA_2.txt',
-            'flex_v2_vector_F_HD_2.txt',
-            'flex_v3_vector_F_AA_4.txt',
-            'flex_v5_vector_F_AA_4.txt'
-        ]
-    }
-    return dic
+TEST_DIR = 'dataset'
+FILE_DIC = {
+    'if': [
+        'gzip_v1_vector_FAULTY_F_KL_2.txt',
+        'gzip_v1_vector_FAULTY_F_KP_1.txt',
+        'gzip_v1_vector_FAULTY_F_KP_9.txt',
+        'gzip_v2_vector_FAULTY_F_KL_1.txt',
+        'gzip_v4_vector_FAULTY_F_KL_1.txt',
+        'gzip_v4_vector_FAULTY_F_KP_3.txt',
+        'grep_v1_vector_FAULTY_F_KP_2.txt',
+        'grep_v4_vector_FAULTY_F_KP_8.txt',
+        'sed_v2_vector_FAULTY_F_AG_2.txt',
+        'sed_v3_vector_FAULTY_F_AG_6.txt',
+        'sed_v3_vector_FAULTY_F_AG_11.txt',
+        'sed_v5_vector_FAULTY_F_KRM_1.txt',
+        'flex_v1_vector_F_AA_3.txt',
+        'flex_v1_vector_F_AA_6.txt',
+        'flex_v1_vector_F_JR_3.txt',
+        'flex_v1_vector_F_AA_1.txt',
+        'flex_v2_vector_F_AA_3.txt',
+        'flex_v2_vector_F_JR_1.txt',
+        'flex_v3_vector_F_AA_3.txt',
+        'flex_v4_vector_F_JR_1.txt',
+        'flex_v4_vector_F_JR_3.txt',
+        'flex_v4_vector_F_AA_3.txt',
+        'flex_v5_vector_F_JR_2.txt'
+    ],
+    'method_call': [
+        'gzip_v1_vector_FAULTY_F_KP_10.txt',
+        'gzip_v5_vector_FAULTY_F_TW_1.txt',
+        'grep_v2_vector_FAULTY_F_DG_1.txt',
+        'grep_v3_vector_FAULTY_F_DG_3.txt',
+        'grep_v3_vector_FAULTY_F_KP_7.txt',
+        'grep_v4_vector_FAULTY_F_DG_3.txt',
+        'grep_v4_vector_FAULTY_F_KP_6.txt',
+        'sed_v2_vector_FAULTY_F_AG_20.txt',
+        'sed_v3_vector_FAULTY_F_AG_15.txt',
+        'sed_v4_vector_FAULTY_F_KRM_2.txt',
+        'flex_v1_vector_F_JR_6.txt',
+        'flex_v1_vector_F_JR_5.txt',
+        'flex_v1_vector_F_JR_4.txt',
+        'flex_v1_vector_F_JR_2.txt',
+        'flex_v2_vector_F_JR_2.txt',
+        'flex_v2_vector_F_JR_3.txt',
+        'flex_v2_vector_F_HD_8.txt',
+        'flex_v2_vector_F_HD_4.txt',
+        'flex_v3_vector_F_HD_6.txt',
+        'flex_v3_vector_F_JR_5.txt',
+        'flex_v3_vector_F_JR_3.txt',
+        'flex_v3_vector_F_JR_2.txt',
+        'flex_v4_vector_F_AA_2.txt',
+        'flex_v4_vector_F_JR_4.txt'
+    ],
+    'sequence': [
+        'gzip_v1_vector_FAULTY_F_TW_3.txt',
+        'sed_v2_vector_FAULTY_F_AG_12.txt',
+        'sed_v2_vector_FAULTY_F_AG_17.txt',
+        'sed_v2_vector_FAULTY_F_AG_19.txt',
+        'sed_v3_vector_FAULTY_F_AG_17.txt',
+        'flex_v2_vector_F_AA_2.txt',
+        'flex_v2_vector_F_HD_6.txt',
+        'flex_v2_vector_F_HD_7.txt',
+        'flex_v2_vector_F_JR_5.txt',
+        'flex_v3_vector_F_AA_5.txt',
+        'flex_v4_vector_F_JR_2.txt',
+        'flex_v4_vector_F_HD_5.txt',
+        'flex_v4_vector_F_AA_7.txt'
+    ],
+    'assignment': [
+        'gzip_v1_vector_FAULTY_F_KL_6.txt',
+        'gzip_v2_vector_FAULTY_F_KL_3.txt',
+        'gzip_v2_vector_FAULTY_F_KL_8.txt',
+        'gzip_v5_vector_FAULTY_F_KL_2.txt',
+        'gzip_v5_vector_FAULTY_F_KL_4.txt',
+        'grep_v3_vector_FAULTY_F_DG_2.txt',
+        'grep_v3_vector_FAULTY_F_DG_8.txt',
+        'sed_v3_vector_FAULTY_F_AG_5.txt',
+        'sed_v3_vector_FAULTY_F_AG_18.txt',
+        'sed_v5_vector_FAULTY_F_KRM_2.txt',
+        'sed_v5_vector_FAULTY_F_KRM_8.txt',
+        'sed_v5_vector_FAULTY_F_KRM_10.txt',
+        'flex_v1_vector_F_AA_2.txt',
+        'flex_v2_vector_F_HD_2.txt',
+        'flex_v3_vector_F_AA_4.txt',
+        'flex_v5_vector_F_AA_4.txt'
+    ]
+}
+
+
+def get_dataset(train_ratio=0.5, seed=42):
+    train_dic = {}
+    test_dic = {}
+    random.seed(seed)
+    for k, v in FILE_DIC.items():
+        lst = [os.path.join(TEST_DIR, fname) for fname in v]
+        random.shuffle(lst)
+        n = int(len(lst)*train_ratio)
+        train_dic[k]=lst[:n]
+        test_dic[k]=lst[n:]
+    return train_dic, test_dic
 

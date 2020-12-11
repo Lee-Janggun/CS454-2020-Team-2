@@ -2,9 +2,8 @@ import os
 import csv
 from formulas import jaccard, ochiai, tarantula, ample, wong1, wong2, wong3, op1, op2
 from pandas import Series
+from dataset import get_dataset
 
-
-TEST_DIR = 'dataset/test'
 FORMULA_DICT = {
     'Jaccard': jaccard,
     'Ochiai': ochiai,
@@ -33,7 +32,11 @@ def calculate_fitness(formula, arg_list):
 
 
 def evaluate():
-    path_list = [os.path.join(TEST_DIR, fname) for fname in os.listdir(TEST_DIR)]
+    _, test_dataset = get_dataset()
+    path_list = []
+    for k, v in test_dataset.items():
+        path_list.extend(v)
+
     arg_list = []
     for filepath in path_list:
         with open(filepath, 'r') as fin:

@@ -1,4 +1,5 @@
 import math
+from operators import div
 
 def jaccard(ep, ef, np, nf):
     return div(ef, ef + nf + ep)
