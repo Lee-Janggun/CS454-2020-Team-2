@@ -1,5 +1,5 @@
 from deap import base, gp, creator, tools, algorithms
-import operator
+import operator, numpy
 import operators, dataset, evaluate
 
 #Generate trees
@@ -54,11 +54,17 @@ def main():
     print("Begin GA")
     pop = toolbox.population(n=30)
     hof = tools.HallOfFame(1)
-    stats = tools.Statistics(lambda ind: ind.fitness.values)
-    pop, log = algorithms.eaSimple(pop, toolbox, 1, 0.08, 100,
-                                   halloffame=hof, verbose=True)
 
-    return pop, hof, stats
+    stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
+    mstats = tools.MultiStatistics(fitness=stats_fit,)
+
+    mstats.register("min", numpy.min)
+
+    pop, log = algorithms.eaSimple(pop, toolbox, 1, 0.08, 100, stats=mstats,
+                                   halloffame=hof, verbose=True)
+    print("HOF")
+    for form in hof:
+        print(str(form))
     
 
 if __name__ == "__main__":
