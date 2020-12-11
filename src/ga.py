@@ -56,29 +56,35 @@ def main():
     toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
     toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
 
-    NUM_OF_FORMULAS = 2
+    NUM_OF_FORMULAS = 30
     CROSS_RATE = 1
     MUT_RATE = 0.08
-    GENERATION = 2
+    GENERATION = 100
+    POPULATION = 40
+    LOGS = True
 
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for if. Formula {i}")
-        pop = toolbox.population(n=40)
+        pop = toolbox.population(n=POPULATION)
         hof = tools.HallOfFame(1)
 
         pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=True)
+                                   halloffame=hof, verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_if))
-        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_if)[0]
+        best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_if)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_if)[0]
         
         print("Best of final population: ")
         print(best)
+
+        print("Train results: ")
+        print(str(best_train_res))
+
         print("Test results: ")
-        print(str(best_res))
-       
+        print(str(best_test_res))
+
         formula_name = f"IF_GP_{i}"
-        saveFormula(formula_name, best, best_res)
+        saveFormula(formula_name, best, best_test_res, best_train_res)
 
     train_spectra_asgn = evaluate.spectra_list(train_dic['assignment'])
     test_spectra_asgn = evaluate.spectra_list(test_dic['assignment'])
@@ -86,23 +92,27 @@ def main():
 
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for assignment. Formula {i}")
-        pop = toolbox.population(n=40)
+        pop = toolbox.population(n=POPULATION)
         hof = tools.HallOfFame(1)
 
         pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=True)
+                                   halloffame=hof, verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_asgn))
 
-        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_asgn)[0]
+        best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_asgn)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_asgn)[0]
         
         print("Best of final population: ")
         print(best)
+
+        print("Train results: ")
+        print(str(best_train_res))
+
         print("Test results: ")
-        print(str(best_res))
-        
+        print(str(best_test_res))
+
         formula_name = f"ASGN_GP_{i}"
-        saveFormula(formula_name, best, best_res)
+        saveFormula(formula_name, best, best_test_res, best_train_res)
 
     train_spectra_mc = evaluate.spectra_list(train_dic['method_call'])
     test_spectra_mc = evaluate.spectra_list(test_dic['method_call'])
@@ -110,22 +120,26 @@ def main():
 
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for method. Formula {i}")
-        pop = toolbox.population(n=40)
+        pop = toolbox.population(n=POPULATION)
         hof = tools.HallOfFame(1)
 
         pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=True)
+                                   halloffame=hof, verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_mc))
-        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_mc)[0]
+        best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_mc)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_mc)[0]
         
         print("Best of final population: ")
         print(best)
+
+        print("Train results: ")
+        print(str(best_train_res))
+
         print("Test results: ")
-        print(str(best_res))
+        print(str(best_test_res))
 
         formula_name = f"MC_GP_{i}"
-        saveFormula(formula_name, best, best_res)
+        saveFormula(formula_name, best, best_test_res, best_train_res)
     
     train_spectra_seq = evaluate.spectra_list(train_dic['sequence'])
     test_spectra_seq = evaluate.spectra_list(test_dic['sequence'])
@@ -133,22 +147,26 @@ def main():
 
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for sequence. Formula {i}")
-        pop = toolbox.population(n=40)
+        pop = toolbox.population(n=POPULATION)
         hof = tools.HallOfFame(1)
 
         pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=True)
+                                   halloffame=hof, verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_seq))
-        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_seq)[0]
+        best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_seq)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_seq)[0]
         
         print("Best of final population: ")
         print(best)
+
+        print("Train results: ")
+        print(str(best_train_res))
+
         print("Test results: ")
-        print(str(best_res))
+        print(str(best_test_res))
 
         formula_name = f"SEQ_GP_{i}"
-        saveFormula(formula_name, best, best_res)
+        saveFormula(formula_name, best, best_test_res, best_train_res)
 
 if __name__ == "__main__":
     main()
