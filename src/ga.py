@@ -40,7 +40,10 @@ def main():
     toolbox.register("expr_init", gp.genHalfAndHalf, min_ = 1, max_ = 4, pset = pset)
     toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr_init)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)  
-    
+   
+    pool = multiprocessing.Pool()
+    toolbox.register("map", pool.map)
+
     train_dic, test_dic = dataset.get_dataset()
     
     train_spectra_if = evaluate.spectra_list(train_dic['if'])
@@ -53,8 +56,6 @@ def main():
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
     toolbox.register("mutate", gp.mutUniform, expr = toolbox.expr_mut, pset = pset)
 
-    pool = multiprocessing.Pool()
-    toolbox.register("map", pool.map)
 
     toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
     toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
