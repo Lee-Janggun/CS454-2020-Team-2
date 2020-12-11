@@ -1,5 +1,6 @@
 from deap import base, gp, creator, tools, algorithms
-import operator, numpy
+from pandas import Series
+import operator, numpy, csv
 import operators, dataset, evaluate
 
 #Generate trees
@@ -7,6 +8,10 @@ def evalFormula(individual, data_set, pset):
     formula = gp.compile(individual, pset)
     return evaluate.calculate_fitness(formula, data_set)
 
+def saveFormula(formula_name, formula, fitness):
+    with open('results.csv', 'a', newline='') as fout:
+            writer = csv.writer(fout)
+            writer.writerow([formula_name, fitness])
 
 def main():
     print("Make primitive set")
@@ -26,7 +31,6 @@ def main():
     creator.create("Individual", gp.PrimitiveTree, fitness=creator.FitnessMax)
 
     expr = gp.genHalfAndHalf(pset, min_ = 1, max_ = 4)
-
     tree = gp.PrimitiveTree(expr)
 
     print("Make toolbox")
@@ -38,10 +42,10 @@ def main():
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)  
     
     train_dic, test_dic = dataset.get_dataset()
-    #TODO: Work file formatting outside of main evaluation for efficency.
     
     train_spectra_if = evaluate.spectra_list(train_dic['if'])
     test_spectra_if = evaluate.spectra_list(test_dic['if'])
+    
 
     toolbox.register("evaluate", evalFormula, data_set = train_spectra_if, pset = pset)
     toolbox.register("select", tools.selTournament, tournsize=7)
@@ -49,25 +53,102 @@ def main():
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=2)
     toolbox.register("mutate", gp.mutUniform, expr = toolbox.expr_mut, pset = pset)
 
-    toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
-    toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=17))
+    toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
+    toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
 
-    print("Begin GA")
-    pop = toolbox.population(n=30)
-    hof = tools.HallOfFame(1)
+    NUM_OF_FORMULAS = 2
+    CROSS_RATE = 1
+    MUT_RATE = 0.08
+    GENERATION = 2
 
-    stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
-    mstats = tools.MultiStatistics(fitness=stats_fit,)
+    for i in range(1,NUM_OF_FORMULAS + 1):
+        print(f"Begin GA for if. Formula {i}")
+        pop = toolbox.population(n=40)
+        hof = tools.HallOfFame(1)
 
-    mstats.register("min", numpy.min)
-
-    pop, log = algorithms.eaSimple(pop, toolbox, 1, 0.08, 100, stats=mstats,
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
                                    halloffame=hof, verbose=True)
-    print("Pop")
-    for form in pop:
-        print(str(form))
-        print(str(evaluate.calculate_fitness(gp.compile(form, pset), test_spectra_if)))
     
+        pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_if))
+        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_if)[0]
+        
+        print("Best of final population: ")
+        print(best)
+        print("Test results: ")
+        print(str(best_res))
+       
+        formula_name = f"IF_GP_{i}"
+        saveFormula(formula_name, best, best_res)
+
+    train_spectra_asgn = evaluate.spectra_list(train_dic['assignment'])
+    test_spectra_asgn = evaluate.spectra_list(test_dic['assignment'])
+    toolbox.register("evaluate", evalFormula, data_set = train_spectra_asgn, pset = pset)
+
+    for i in range(1,NUM_OF_FORMULAS + 1):
+        print(f"Begin GA for assignment. Formula {i}")
+        pop = toolbox.population(n=40)
+        hof = tools.HallOfFame(1)
+
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
+                                   halloffame=hof, verbose=True)
+    
+        pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_asgn))
+
+        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_asgn)[0]
+        
+        print("Best of final population: ")
+        print(best)
+        print("Test results: ")
+        print(str(best_res))
+        
+        formula_name = f"ASGN_GP_{i}"
+        saveFormula(formula_name, best, best_res)
+
+    train_spectra_mc = evaluate.spectra_list(train_dic['method_call'])
+    test_spectra_mc = evaluate.spectra_list(test_dic['method_call'])
+    toolbox.register("evaluate", evalFormula, data_set = train_spectra_mc, pset = pset)
+
+    for i in range(1,NUM_OF_FORMULAS + 1):
+        print(f"Begin GA for method. Formula {i}")
+        pop = toolbox.population(n=40)
+        hof = tools.HallOfFame(1)
+
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
+                                   halloffame=hof, verbose=True)
+    
+        pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_mc))
+        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_mc)[0]
+        
+        print("Best of final population: ")
+        print(best)
+        print("Test results: ")
+        print(str(best_res))
+
+        formula_name = f"MC_GP_{i}"
+        saveFormula(formula_name, best, best_res)
+    
+    train_spectra_seq = evaluate.spectra_list(train_dic['sequence'])
+    test_spectra_seq = evaluate.spectra_list(test_dic['sequence'])
+    toolbox.register("evaluate", evalFormula, data_set = train_spectra_seq, pset = pset)
+
+    for i in range(1,NUM_OF_FORMULAS + 1):
+        print(f"Begin GA for sequence. Formula {i}")
+        pop = toolbox.population(n=40)
+        hof = tools.HallOfFame(1)
+
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
+                                   halloffame=hof, verbose=True)
+    
+        pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_seq))
+        best, best_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_seq)[0]
+        
+        print("Best of final population: ")
+        print(best)
+        print("Test results: ")
+        print(str(best_res))
+
+        formula_name = f"SEQ_GP_{i}"
+        saveFormula(formula_name, best, best_res)
 
 if __name__ == "__main__":
     main()
