@@ -62,7 +62,7 @@ Class Field
 
 """
 
-TEST_DIR = 'dataset'
+DATASET_DIR = 'dataset'
 FILE_DIC = {
     'if': [
         'gzip_v1_vector_FAULTY_F_KL_2.txt',
@@ -156,7 +156,7 @@ def get_dataset(train_ratio=0.5, seed=42):
     test_dic = {}
     random.seed(seed)
     for k, v in FILE_DIC.items():
-        lst = [os.path.join(TEST_DIR, fname) for fname in v]
+        lst = [os.path.join(DATASET_DIR, fname) for fname in v]
         random.shuffle(lst)
         n = int(len(lst)*train_ratio)
         train_dic[k]=lst[:n]

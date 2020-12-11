@@ -1,4 +1,3 @@
-import os
 import csv
 from formulas import jaccard, ochiai, tarantula, ample, wong1, wong2, wong3, op1, op2
 from pandas import Series
