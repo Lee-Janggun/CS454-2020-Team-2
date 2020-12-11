@@ -39,8 +39,9 @@ def main():
     
     train_dic, test_dic = dataset.get_dataset()
     #TODO: Work file formatting outside of main evaluation for efficency.
+    
     train_spectra_if = evaluate.spectra_list(train_dic['if'])
-    test_spectra_if = test_dic['if']
+    test_spectra_if = evaluate.spectra_list(test_dic['if'])
 
     toolbox.register("evaluate", evalFormula, data_set = train_spectra_if, pset = pset)
     toolbox.register("select", tools.selTournament, tournsize=7)
@@ -62,9 +63,10 @@ def main():
 
     pop, log = algorithms.eaSimple(pop, toolbox, 1, 0.08, 100, stats=mstats,
                                    halloffame=hof, verbose=True)
-    print("HOF")
-    for form in hof:
+    print("Pop")
+    for form in pop:
         print(str(form))
+        print(str(evaluate.calculate_fitness(gp.compile(form, pset), test_spectra_if)))
     
 
 if __name__ == "__main__":
