@@ -40,9 +40,10 @@ def main():
     toolbox.register("expr_init", gp.genHalfAndHalf, min_ = 1, max_ = 4, pset = pset)
     toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr_init)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)  
-   
-    pool = multiprocessing.Pool()
-    toolbox.register("map", pool.map)
+    
+    #Multiprocessing: VERY BUGGY
+    #pool = multiprocessing.Pool()
+    #toolbox.register("map", pool.map)
 
     train_dic, test_dic = dataset.get_dataset()
     
