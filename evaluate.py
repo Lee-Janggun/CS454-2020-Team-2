@@ -31,7 +31,7 @@ def calculate_fitness(formula, arg_list):
     return fitness
 
 
-def evaluate(name, formula, dataset):
+def evaluate(formula, dataset):
     path_list = []
     for k, v in dataset.items():
         path_list.extend(v)
@@ -44,15 +44,15 @@ def evaluate(name, formula, dataset):
         error_line = int(lst[0].strip())
         spectra_list = [tuple([int(x.strip()) for x in sp.split(',')]) for sp in lst[1:]]  # list of (e_p, e_f, n_p, n_f)
         arg_list.append({'spectra_list': spectra_list, 'error_line': error_line})
-
-    with open('results.csv', 'w', newline='') as fout:
-        writer = csv.writer(fout)
-        writer.writerow(['formula', 'fitness'])
-        fitness = calculate_fitness(formula, arg_list)
-        writer.writerow([name, fitness])
+        
+        return calculate_fitness(formula, arg_list)
 
 
 if __name__ == '__main__':
     _, test_dataset = get_dataset()
     for name, formula in FORMULA_DICT.items():
-        evaluate(name, formula, test_dataset)
+        with open('results.csv', 'w', newline='') as fout:
+            writer = csv.writer(fout)
+            writer.writerow(['formula', 'fitness'])
+            fitness = evaluate(formula, test_dataset)
+            writer.writerow([name, fitness])
