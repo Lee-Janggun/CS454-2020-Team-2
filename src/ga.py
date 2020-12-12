@@ -1,6 +1,5 @@
 from deap import base, gp, creator, tools, algorithms
-from pandas import Series
-import operator, csv, multiprocessing
+import operator, csv, numpy
 import operators, dataset, evaluate
 
 #Generate trees
@@ -11,7 +10,7 @@ def evalFormula(individual, data_set, pset):
 def saveFormula(formula_name, formula, test_fitness, train_fitness):
     with open('results.csv', 'a', newline='') as fout:
             writer = csv.writer(fout)
-            writer.writerow([formula_name, test_fitness, train_fitness])
+            writer.writerow([formula_name, formula, f"{test_fitness:.5f}", f"{train_fitness:.5f}"])
 
 def main():
     print("Make primitive set")
@@ -41,9 +40,6 @@ def main():
     toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.expr_init)
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)  
     
-    #Multiprocessing: VERY BUGGY
-    #pool = multiprocessing.Pool()
-    #toolbox.register("map", pool.map)
 
     train_dic, test_dic = dataset.get_dataset()
     
@@ -61,7 +57,11 @@ def main():
     toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
     toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
 
-    NUM_OF_FORMULAS = 30
+    stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
+    mstats = tools.MultiStatistics(fitness=stats_fit)
+    mstats.register("min", numpy.min)
+
+    NUM_OF_FORMULAS = 10
     CROSS_RATE = 1
     MUT_RATE = 0.08
     GENERATION = 100
@@ -69,13 +69,11 @@ def main():
     LOGS = True
 
     for i in range(1,NUM_OF_FORMULAS + 1):
-        
         print(f"Begin GA for if. Formula {i}")
         pop = toolbox.population(n=POPULATION)
-        hof = tools.HallOfFame(1)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=LOGS)
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+                                    verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_if))
         best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_if)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_if)[0]
@@ -99,15 +97,14 @@ def main():
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for assignment. Formula {i}")
         pop = toolbox.population(n=POPULATION)
-        hof = tools.HallOfFame(1)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=LOGS)
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+                                   verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_asgn))
 
         best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_asgn)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_asgn)[0]
-        
+
         print("Best of final population: ")
         print(best)
 
@@ -127,10 +124,9 @@ def main():
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for method. Formula {i}")
         pop = toolbox.population(n=POPULATION)
-        hof = tools.HallOfFame(1)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=LOGS)
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+                                   verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_mc))
         best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_mc)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_mc)[0]
@@ -154,10 +150,9 @@ def main():
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for sequence. Formula {i}")
         pop = toolbox.population(n=POPULATION)
-        hof = tools.HallOfFame(1)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
-                                   halloffame=hof, verbose=LOGS)
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+                                   verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_seq))
         best, best_train_res, best_test_res = str(pop[0]), evaluate.calculate_fitness(gp.compile(pop[0], pset), train_spectra_seq)[0], evaluate.calculate_fitness(gp.compile(pop[0], pset), test_spectra_seq)[0]
