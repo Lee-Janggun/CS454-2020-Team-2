@@ -64,15 +64,15 @@ def main():
     NUM_OF_FORMULAS = 10
     CROSS_RATE = 1
     MUT_RATE = 0.08
-    GENERATION = 100
+    GENERATION = 80
     POPULATION = 40
-    LOGS = True
+    LOGS = False
 
     for i in range(1,NUM_OF_FORMULAS + 1):
         print(f"Begin GA for if. Formula {i}")
         pop = toolbox.population(n=POPULATION)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
                                     verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_if))
@@ -98,7 +98,7 @@ def main():
         print(f"Begin GA for assignment. Formula {i}")
         pop = toolbox.population(n=POPULATION)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
                                    verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_asgn))
@@ -125,7 +125,7 @@ def main():
         print(f"Begin GA for method. Formula {i}")
         pop = toolbox.population(n=POPULATION)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1,
                                    verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_mc))
@@ -151,7 +151,7 @@ def main():
         print(f"Begin GA for sequence. Formula {i}")
         pop = toolbox.population(n=POPULATION)
 
-        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, stats=mstats,
+        pop, _ = algorithms.eaSimple(pop, toolbox, CROSS_RATE, MUT_RATE, GENERATION - 1, 
                                    verbose=LOGS)
     
         pop = sorted(pop, key = lambda x: evaluate.calculate_fitness(gp.compile(x, pset), train_spectra_seq))
