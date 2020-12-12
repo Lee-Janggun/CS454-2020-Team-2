@@ -54,8 +54,8 @@ def main():
     toolbox.register("mutate", gp.mutUniform, expr = toolbox.expr_mut, pset = pset)
 
 
-    toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
-    toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=10))
+    toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=5))
+    toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=5))
 
     stats_fit = tools.Statistics(lambda ind: ind.fitness.values)
     mstats = tools.MultiStatistics(fitness=stats_fit)
