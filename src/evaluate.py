@@ -51,12 +51,10 @@ def evaluate(formula, data_path_list):
 
 if __name__ == '__main__':
     _, test_dataset = get_dataset()
-    path_list = []
-    for _, v in test_dataset.items():
-        path_list.extend(v)
-    for name, formula in FORMULA_DICT.items():
-        with open('results.csv', 'w', newline='') as fout:
-            writer = csv.writer(fout)
-            writer.writerow(['formula', 'fitness'])
-            fitness = evaluate(formula, path_list)
-            writer.writerow([name, fitness])
+    with open('results_baselines.csv', 'w', newline='') as fout:
+        writer = csv.writer(fout)
+        writer.writerow(['fault', 'formula', 'fitness'])
+        for fault, path_list in test_dataset.items():
+            for name, formula in FORMULA_DICT.items():
+                fitness = evaluate(formula, path_list)
+                writer.writerow([fault, name, fitness[0]])
