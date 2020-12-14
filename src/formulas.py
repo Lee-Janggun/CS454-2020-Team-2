@@ -137,3 +137,15 @@ def gp30(ep, ef, np, nf):
 gp_list = [gp1 , gp2 , gp3 , gp4 , gp5 , gp6 , gp7 , gp8 , gp9 , gp10,
            gp11, gp12, gp13, gp14, gp15, gp16, gp17, gp18, gp19, gp20,
            gp21, gp22, gp23, gp24, gp25, gp26, gp27, gp28, gp29, gp30]
+
+def gpif(ep, ef, np, nf):
+    return div(div(nf, ef) - ef * nf * np - 1, 2 * ef * (nf ** 2 * np * ep + nf ** 2 - nf * (np ** 2) + ep * np))
+
+def gpasgn(ep, ef, np, nf):
+    return div(ef, 1 - 2 * nf) - ef - nf + math.sqrt(np) - 1
+
+def gpcall(ep, ef, np, nf):
+    return 2 * math.sqrt(math.sqrt(abs(np - nf))) + ef
+
+def gpseq(ep, ef, np, nf):
+    return div((np + ep) * (np ** 2 + nf * np), ef + ep - (np ** 2) * nf - np * (nf ** 2))
