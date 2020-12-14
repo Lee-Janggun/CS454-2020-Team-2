@@ -1,5 +1,5 @@
 import csv
-from formulas import jaccard, ochiai, tarantula, ample, wong1, wong2, wong3, op1, op2
+from formulas import jaccard, ochiai, tarantula, ample, wong1, wong2, wong3, op1, op2, gp2, gp3, gp13, gp19
 from pandas import Series
 from dataset import get_dataset
 
@@ -12,7 +12,11 @@ FORMULA_DICT = {
     'Wong2': wong2,
     'Wong3': wong3,
     'Op1': op1,
-    'Op2': op2
+    'Op2': op2,
+    'gp2': gp2,
+    'gp3': gp3,
+    'gp13': gp13,
+    'gp19': gp19
 }
 
 
@@ -51,10 +55,10 @@ def evaluate(formula, data_path_list):
 
 if __name__ == '__main__':
     _, test_dataset = get_dataset()
-    with open('results_baselines.csv', 'w', newline='') as fout:
+    with open('results/updated_results_baselines.csv', 'w', newline='') as fout:
         writer = csv.writer(fout)
         writer.writerow(['fault', 'formula', 'fitness'])
         for fault, path_list in test_dataset.items():
             for name, formula in FORMULA_DICT.items():
                 fitness = evaluate(formula, path_list)
-                writer.writerow([fault, name, fitness[0]])
+                writer.writerow([fault, name, '{0:.2f}'.format(fitness[0])])
