@@ -42,9 +42,10 @@ def parse_formula(fun_str):
 def read_formulas(file_path):
     formula_list = []
     with open(file_path, 'r') as file:
-        file.readline() # Ignore first line
         while True:
             line = file.readline()
+            if '"' not in line:
+                continue
             if not line:
                 break
             fun_str = line.split('"')[1]
