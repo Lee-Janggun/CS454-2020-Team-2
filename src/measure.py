@@ -70,10 +70,8 @@ def file_test(formula_path, data_path, write_path):
             sim_list = list(map(lambda f : str(compare_formula(spectra_list, f, eval_formula)), formula_list))
             out.write(name + "," + ','.join(sim_list) + '\n')
 
-def form_test():
+def form_test(data_path, write_path):
     formula_list = [gpif, gpasgn, gpcall, gpseq]
-    data_path = sys.argv[2]
-    write_path = sys.argv[3]
     human_list = [("jaccard", jaccard), ("ochiai", ochiai), ("tarantula", tarantula),
                     ("ample", ample), ("wong1", wong1), ("wong2", wong2), ("wong3", wong3), ("op1", op1), ("op2", op2)]
     spectra_list = evaluate.spectra_list([data_path])[0]["spectra_list"]
